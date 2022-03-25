@@ -118,6 +118,7 @@ button {
   flex-basis: 25px;
   border: 1px solid #d2d7d3;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .keyboard .keys-section button.present {
@@ -136,4 +137,8 @@ button {
   background-color: #6aaa64;
   color: #fff;
   border: none;
+}
+
+button[data-test-id="Enter"] {
+  font-size: 10px;
 }

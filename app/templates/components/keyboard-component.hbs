@@ -12,9 +12,17 @@
       {{/each}}
     </div>
 
+
+
     <div>{{#each this.keyboardThirdRow as |board index|}}
-      <button data-test-id={{board.key}} class={{board.className}}
-        {{action this.pressKey board.key}}>{{board.key}}</button>
+      <button data-test-id={{board.key}} class={{board.className}} {{action this.pressKey board.key}}>
+        {{#if (equal-string board.key "Backspace")}}
+        <i class="fa fa-arrow-circle-left"></i>
+        {{else}}
+        {{board.key}}
+        {{/if}}
+
+      </button>
       {{/each}}
     </div>
 
