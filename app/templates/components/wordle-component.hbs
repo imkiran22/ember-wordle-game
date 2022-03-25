@@ -1,0 +1,10 @@
+<section class="wrapper {{if wordleMeta.gameOver 'disable-wordle'}}">
+  {{#each boxes as |box index|}}
+  <div class="wordle {{if (freeze-helper wordleMeta.freezeRows index) 'freeze-row'}}" id={{index}}>
+    {{yield (hash
+            boxed=(component "wordle-box-component" box=box)
+          ) 
+        }}
+  </div>
+  {{/each}}
+</section>

@@ -1,0 +1,23 @@
+<div class="keyboard">
+  <section class="keys-section">
+    <div>{{#each this.keyboardFirstRow as |board index|}}
+      <button data-test-id={{board.key}} class={{board.className}}
+        {{action this.pressKey board.key}}>{{board.key}}</button>
+      {{/each}}
+    </div>
+
+    <div>{{#each this.keyboardSecondRow as |board index|}}
+      <button data-test-id={{board.key}} class={{board.className}}
+        {{action this.pressKey board.key}}>{{board.key}}</button>
+      {{/each}}
+    </div>
+
+    <div>{{#each this.keyboardThirdRow as |board index|}}
+      <button data-test-id={{board.key}} class={{board.className}}
+        {{action this.pressKey board.key}}>{{board.key}}</button>
+      {{/each}}
+    </div>
+
+  </section>
+
+</div>
