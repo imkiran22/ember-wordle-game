@@ -1,7 +1,7 @@
 import Application from "@ember/application";
 import Resolver from "ember-resolver";
 import loadInitializers from "ember-load-initializers";
-import config from "my-app/config/environment";
+import config from "ember-wordle-game/config/environment";
 
 console.log("Hello");
 export default class App extends Application {
