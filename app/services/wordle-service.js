@@ -226,7 +226,7 @@ export default Service.extend({
   },
 
   _checkAnswer() {
-    const {
+    let {
       position,
       attempts,
       currentChance,
@@ -260,12 +260,15 @@ export default Service.extend({
       });
       // show correct present letters
       this._checkPositionLetters(answer, startIndex - 5);
+      // if last combination is wrong increase the total chance
+      currentChance = currentChance + 1;
+      this.wordleMeta.set("currentChance", currentChance);
     } else {
       this.wordleMeta.set("info", "Not in word list");
     }
 
     this.wordleMeta.set("attempts", attempts + 1);
-    if (currentChance === totalChances && !this.wordleMeta.won) {
+    if (currentChance > totalChances && !this.wordleMeta.won) {
       this.wordleMeta.setProperties({
         freezed: true,
         gameOver: true,
