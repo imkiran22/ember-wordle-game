@@ -13,8 +13,7 @@ const TOTAL_WORDS = NO_OF_COLS * CHANCES;
 export default Service.extend({
   store: service(),
   wordsList: [...Words],
-  // correctAnswer: Words[Math.floor(Math.random() * Words.length)],
-  correctAnswer: "ocean",
+  correctAnswer: Words[Math.floor(Math.random() * Words.length)],
   letterPositions: computed({
     get() {
       let obj = {};
@@ -171,14 +170,29 @@ export default Service.extend({
     arr.splice(index, 1);
   },
 
-  _addKeyboardClass(key, className) {
+  _addKeyboardClass(key, className, timer) {
     const data = { ...this.keyboardMeta };
-    const alphabets = { ...data.alphabets, [key]: className };
+    let applyClass = "";
+    if (className === "correct") {
+      applyClass = className;
+    } else if (className === "present") {
+      if (data.alphabets[key] === "correct") {
+        applyClass = "correct";
+      } else {
+        applyClass = "present";
+      }
+    } else {
+      if (!["present", "correct"].includes(data.alphabets[key])) {
+        applyClass = className;
+      }
+    }
+    const alphabets = { ...data.alphabets, [key]: applyClass };
     this.keyboardMeta.set("alphabets", alphabets);
   },
 
   _checkPositionLetters(answer, start) {
     let timer = 0;
+    let keyboardTimer = 0;
     let obj = this._correctAnswersPositions();
     let letterIndex = 0;
 
@@ -194,34 +208,66 @@ export default Service.extend({
             : "present";
           this._addBackgroundClass(start++, timer++, className);
           this._removePositionFromArr(arr, index);
-          this._addKeyboardClass(letter, className);
+          later(
+            this,
+            () => {
+              this._addKeyboardClass(letter, className);
+            },
+            keyboardTimer++ * 650
+          );
         } else {
           const index = this._findFirstMatchingIndex(arr, answer);
           if (index === -1) {
             this._addBackgroundClass(start++, timer++, "invalid");
-            this._addKeyboardClass(letter, "invalid");
+            later(
+              this,
+              () => {
+                this._addKeyboardClass(letter, "invalid");
+              },
+              keyboardTimer++ * 650
+            );
           } else {
             if (isWordCorrectAtBothPositions) {
               this._addBackgroundClass(start++, timer++, "correct");
-              this._addKeyboardClass(letter, "correct");
+              later(
+                this,
+                () => {
+                  this._addKeyboardClass(letter, "correct");
+                },
+                keyboardTimer++ * 650
+              );
+
               this._removePositionFromArr(arr, index);
             } else {
               this._addBackgroundClass(start++, timer++, "invalid");
-              this._addKeyboardClass(letter, "invalid");
+              later(
+                this,
+                () => {
+                  this._addKeyboardClass(letter, "invalid");
+                },
+                keyboardTimer++ * 650
+              );
             }
           }
         }
       } else {
         this._addBackgroundClass(start++, timer++, "invalid");
-        this._addKeyboardClass(letter, "invalid");
+        later(
+          this,
+          () => {
+            this._addKeyboardClass(letter, "invalid");
+          },
+          keyboardTimer++ * 650
+        );
       }
       letterIndex++;
     }
   },
 
   _correctKeyboard(answer) {
+    let timer = 0;
     for (let char of answer) {
-      this._addKeyboardClass(char, "correct");
+      this._addKeyboardClass(char, "correct", timer++);
     }
   },
 

@@ -31,7 +31,8 @@ body {
   flex-basis: 50px;
   min-height: 40px;
   border: 0.1px solid #d2d7d3;
-  color: black;
+  color: #363636;
+  font-weight: bold;
   align-items: center;
   justify-content: center;
   display: inline-flex;
@@ -65,7 +66,11 @@ body {
   margin-bottom: 10px;
   text-transform: uppercase;
   font-weight: bold;
-  color: teal;
+  color: blue;
+}
+
+.wordle-info .title {
+  color: #363636;
 }
 
 .wordle-info > span {
@@ -115,10 +120,11 @@ button {
 .keyboard .keys-section button {
   margin: 2px;
   text-transform: uppercase;
-  flex-basis: 25px;
+  width: 50px;
   border: 1px solid #d2d7d3;
   font-weight: bold;
   cursor: pointer;
+  padding: 10px 5px;
 }
 
 .keyboard .keys-section button.present {
