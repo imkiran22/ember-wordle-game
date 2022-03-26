@@ -14,4 +14,5 @@ export default class extends Model {
   freezeRows = attr("json");
   won = attr("boolean");
   info = attr("string");
+  error = attr("boolean");
 }

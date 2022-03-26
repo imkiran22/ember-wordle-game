@@ -1,10 +1,11 @@
 import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
-import { computed, action } from "@ember/object";
 
 export default class extends Component {
   @service store;
   @service wordleService;
+  errorMessage = "Not in word list";
+  // successMessage = "Impressive";
   get wordleInfo() {
     return this.wordleService.wordleMeta;
   }

@@ -73,7 +73,8 @@ export default Service.extend({
       gameOver: false,
       freezeRows: this._initFreezeRows(),
       won: false,
-      info: ""
+      info: "",
+      error: false
     });
   },
 
@@ -87,7 +88,7 @@ export default Service.extend({
 
   //do not perform any more changes
   checkIfCurrentRowIsFreezed() {
-    const { freezeRows, position, freezed, currentChance } = this.wordleMeta;
+    const { freezeRows, position } = this.wordleMeta;
     let pos = position - 1;
     let row = -1;
     if (pos <= 4) {
@@ -310,7 +311,14 @@ export default Service.extend({
       currentChance = currentChance + 1;
       this.wordleMeta.set("currentChance", currentChance);
     } else {
-      this.wordleMeta.set("info", "Not in word list");
+      this.wordleMeta.set("error", true);
+      later(
+        this,
+        () => {
+          this.wordleMeta.set("error", false);
+        },
+        1000
+      );
     }
 
     this.wordleMeta.set("attempts", attempts + 1);
