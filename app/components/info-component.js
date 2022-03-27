@@ -5,7 +5,6 @@ export default class extends Component {
   @service store;
   @service wordleService;
   errorMessage = "Not in word list";
-  // successMessage = "Impressive";
   get wordleInfo() {
     return this.wordleService.wordleMeta;
   }

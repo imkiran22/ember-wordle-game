@@ -174,18 +174,16 @@ export default Service.extend({
   _addKeyboardClass(key, className, timer) {
     const data = { ...this.keyboardMeta };
     let applyClass = "";
-    if (className === "correct") {
+
+    if (data.alphabets[key] === "correct") return null;
+
+    if (["correct", "present"].includes(className)) {
       applyClass = className;
-    } else if (className === "present") {
-      if (data.alphabets[key] === "correct") {
-        applyClass = "correct";
-      } else {
-        applyClass = "present";
-      }
     } else {
-      if (!["present", "correct"].includes(data.alphabets[key])) {
-        applyClass = className;
+      if (data.alphabets[key] === "present") {
+        return null;
       }
+      applyClass = className;
     }
     const alphabets = { ...data.alphabets, [key]: applyClass };
     this.keyboardMeta.set("alphabets", alphabets);

@@ -1,7 +1,6 @@
 import Component from "@ember/component";
 import { inject as service } from "@ember/service";
 import { computed, action } from "@ember/object";
-import { getDOMElement } from "../utils/wordle-utils";
 import WordleMixin from "../mixins/wordle-mixin";
 
 export default class extends Component.extend(WordleMixin) {
