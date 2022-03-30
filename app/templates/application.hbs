@@ -1,7 +1,7 @@
 <section class="root responsive" id="root">
   {{info-component}}
-  {{#wordle-component as |b|}}
+  {{#wordle-component class="wordle-container" as |b|}}
   {{b.boxed}}
   {{/wordle-component}}
-  {{keyboard-component}}
+  {{keyboard-component class="keyboard-container"}}
 </section>
