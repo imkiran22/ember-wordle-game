@@ -12,5 +12,17 @@ export default class ApplicationController extends Controller {
     super(...arguments);
     this.wordleService.createWordleMeta();
     this.wordleService.createKeyboard();
+    this.setThemeBasedOnDevice();
+  }
+
+  setThemeBasedOnDevice() {
+    let mode = "light-mode";
+    if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    ) {
+      mode = "dark-mode";
+    }
+    document.body.classList.add(mode);
   }
 }
