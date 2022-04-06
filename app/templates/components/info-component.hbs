@@ -1,10 +1,10 @@
 <div class="wordle-info">
   <h1 class="title">WORDLE</h1>
-  {{#if this.wordleInfo.error}}
-  <span>{{this.errorMessage}}</span>
-  {{/if}}
+  {{!-- {{#if this.wordleInfo.error}}
+    <span>{{this.errorMessage}}</span>
+  {{/if}} --}}
   {{#if this.wordleInfo.gameOver}}
   <span>{{this.wordleInfo.info}}</span>
   {{/if}}
-  <span>{{ log this.correctAnswer }}</span>
+  {{!-- <span>{{ log this.correctAnswer }}</span> --}}
 </div>

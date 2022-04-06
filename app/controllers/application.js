@@ -3,10 +3,12 @@ import { computed, action } from "@ember/object";
 import { throttle } from "@ember/runloop";
 import { tracked } from "@glimmer/tracking";
 import { inject as service } from "@ember/service";
+import { getOwner } from "@ember/application";
 
 export default class ApplicationController extends Controller {
   @service store;
   @service wordleService;
+  // @service toasterService;
   appName = "Wordle Game";
   constructor() {
     super(...arguments);

@@ -51,3 +51,13 @@
   transition: background-color 0.2s ease-in;
   color: #fff;
 }
+
+.light-mode .toaster {
+  background: var(--dark);
+  color: var(--light);
+}
+
+.dark-mode .toaster {
+  background: var(--light);
+  color: var(--dark);
+}

@@ -5,6 +5,7 @@ import { computed } from "@ember/object";
 import { Words } from "../constants/wordle-constants";
 import { createKeyboard } from "../utils/wordle-utils";
 import { later } from "@ember/runloop";
+import { getOwner } from "@ember/application";
 
 const NO_OF_COLS = 5;
 const CHANCES = 6;
@@ -12,6 +13,11 @@ const TOTAL_WORDS = NO_OF_COLS * CHANCES;
 
 export default Service.extend({
   store: service(),
+  toastService: computed({
+    get() {
+      return getOwner(this).lookup("service:toaster-service");
+    }
+  }),
   wordsList: [...Words],
   correctAnswer: Words[Math.floor(Math.random() * Words.length)],
   letterPositions: computed({
@@ -134,6 +140,7 @@ export default Service.extend({
       this,
       () => {
         this.wordleMeta.setProperties({ info: "Impressive" });
+        this.toastService.showToast("Impressive");
       },
       timer * 650
     );
@@ -317,6 +324,7 @@ export default Service.extend({
         },
         1000
       );
+      this.toastService.showToast("Oops not in word list");
     }
 
     this.wordleMeta.set("attempts", attempts + 1);
@@ -327,6 +335,7 @@ export default Service.extend({
         won: false,
         info: `Answer is ${this.correctAnswer}`
       });
+      this.toastService.showToast("Try next time");
     }
   },
 
