@@ -9,8 +9,6 @@ body {
 }
 
 .root {
-  /* background: #ebe9e0;
-  border: 1px solid #ebe9e0; */
   padding: 10px;
   display: inline-flex;
   flex-flow: column nowrap;
@@ -49,7 +47,7 @@ body {
 .wrapper .wordle .box {
   margin: 0px;
   padding: 0px;
-  flex-basis: 50px;
+  flex-basis: 40px;
   min-height: 40px;
   border: 0.1px solid #d2d7d3;
   color: #363636;
@@ -68,6 +66,7 @@ body {
   margin-bottom: 10%;
   text-transform: uppercase;
   font-weight: bold;
+  position: relative;
 }
 
 /* .wordle-info .title {
@@ -142,4 +141,13 @@ button {
 
 button[data-test-id="Enter"] {
   font-size: 10px;
+}
+
+.alert {
+  position: absolute;
+  bottom: 0;
+  left: 48%;
+  transform: translate(-50%, 0%);
+  color: darkslateblue;
+  letter-spacing: 1px;
 }
