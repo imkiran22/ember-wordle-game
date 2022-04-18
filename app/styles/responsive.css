@@ -32,7 +32,7 @@
     display: flex;
   }
   #root .wrapper .wordle .wordle-box {
-    flex-basis: 80px;
+    flex-basis: 60px;
     min-height: 60px;
   }
   #root.responsive .keyboard .keys-section button {
