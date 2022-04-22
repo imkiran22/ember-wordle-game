@@ -145,9 +145,10 @@ button[data-test-id="Enter"] {
 
 .alert {
   position: absolute;
-  bottom: 0;
+  bottom: 3px;
   left: 48%;
   transform: translate(-50%, 0%);
-  color: darkslateblue;
-  letter-spacing: 1px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 11px;
 }
