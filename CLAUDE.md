@@ -4,21 +4,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
+**On Node 17+ the bare npm scripts do not work** — `npm run build` dies with `ERR_INVALID_ARG_TYPE` before compiling anything. Every `ember` invocation needs a two-part prefix:
+
 ```bash
-npm start                    # JOBS=1 ember serve -> http://localhost:4200
-npm run build                # ember build --environment=production -> dist/
-npm run lint                 # lint:js + lint:hbs in parallel
+# The prefix must be written inline on each command. Do not hoist it into a
+# variable and use `env $VAR ...` - zsh does not word-split unquoted expansions,
+# so env sets JOBS to the whole string and NODE_OPTIONS never gets set.
+JOBS=1 NODE_OPTIONS=--openssl-legacy-provider npx ember serve               # -> :4200
+JOBS=1 NODE_OPTIONS=--openssl-legacy-provider npx ember build -e production # -> dist/
+JOBS=1 NODE_OPTIONS=--openssl-legacy-provider npx ember test                # headless Chrome
+JOBS=1 NODE_OPTIONS=--openssl-legacy-provider npx ember test --server       # watch mode
+JOBS=1 NODE_OPTIONS=--openssl-legacy-provider npx ember test --filter "a name"
+
+npm run lint                 # lint:js + lint:hbs in parallel (no prefix needed)
 npm run lint:js -- --fix     # eslint autofix
-npm test                     # npm-run-all lint:* test:* (sequential: lint failure aborts before tests)
-npx ember test               # tests only, headless Chrome via testem
-npx ember test --server      # watch mode, or browse http://localhost:4200/tests
-npx ember test --filter "some test name"   # run a single test / matching subset
 ```
 
+- `NODE_OPTIONS=--openssl-legacy-provider` — webpack 4 hashes with MD4, which OpenSSL 3 refuses (`ERR_OSSL_EVP_UNSUPPORTED`).
+- `JOBS=1` — without it, the ancient `workerpool` bundled under `ember-cli-test-loader` calls `child.send()` with an array where Node now demands an object (`ERR_INVALID_ARG_TYPE`). This is why the `start` script already pins `JOBS=1`.
+
 Notes:
-- Lint currently fails on pre-existing errors (22 eslint, 18 ember-template-lint). Because `npm test` runs `lint:*` before `test:ember`, it never reaches the test run. Use `npx ember test` directly. When adding lint fixes, don't treat the existing failures as regressions you introduced.
+- Lint currently fails on pre-existing errors (20 eslint, 18 ember-template-lint). Because `npm test` runs `lint:*` before `test:ember`, it never reaches the test run — run `ember test` directly with the prefix above. When adding lint fixes, don't treat the existing failures as regressions you introduced.
 - `tests/` contains only `.gitkeep` placeholders — there are no test files yet. Test infra is ember-qunit + qunit-dom + testem (headless Chrome).
-- `package.json` has two `engines` keys (`16.x` and `10.* || >= 12`); the second wins. ember-cli 3.18 prints an "untested Node version" warning on modern Node but works.
+- testem is configured for `Chrome` specifically; on a machine without it, `ember test` fails with "Launcher Chrome not found" before running anything. To smoke-test without Chrome, build and boot `dist/` under jsdom — ember-data 3.18 additionally needs a `window.crypto.getRandomValues` polyfill or it throws "Cannot find a valid way to generate local identifiers".
 
 ## Architecture
 
@@ -58,7 +66,16 @@ Two freeze concepts, easy to confuse:
 
 ### Word list
 
-`app/constants/wordle-constants.js` (~13k lines) exports `SINGULAR_WORDS`, `PLURAL_WORDS`, and `Words = [...SINGULAR_WORDS, ...PLURAL_WORDS]`. The service picks `correctAnswer` randomly from `Words` when the service is instantiated, and validates guesses against the same list — so the answer pool and the accepted-guess pool are identical, and edits to either array change both. The answer is logged to the console by `{{log this.correctAnswer}}` in `info-component.hbs`, which is the easiest way to drive the game manually.
+`app/constants/wordle-constants.js` (~2.3k lines) exports one pool and one alias:
+
+- `ANSWER_WORDS` (2,310) — the curated pool `correctAnswer` is drawn from. Common, guessable, non-offensive.
+- `Words` — currently just `[...ANSWER_WORDS]`, used to validate guesses. Kept as a separate export so a wider guess-only pool could be added here without touching the service.
+
+So the answer pool and the accepted-guess pool are the same 2,310 words today. A ~10.7k-word dictionary (obscure entries plus slurs and profanity) used to be concatenated in as `PLURAL_WORDS`; commit `66c15f9` **deliberately deleted it**. Do not restore it — and if a wider guess list is ever wanted, it must be slur-filtered and wired to `Words` only, never to `ANSWER_WORDS`: a losing game renders the answer to the screen via ``info: `Answer is ${correctAnswer}` ``.
+
+`wordle-service.js` builds a module-level `VALID_GUESSES = new Set(Words)` for O(1) guess checks, and draws the answer in `init()` via `pickAnswer()`. The draw must stay in `init()`: in a classic `Service.extend({...})` an expression in the object literal evaluates once at *module* load, freezing one answer onto the prototype for the whole page.
+
+The answer is logged to the console by `{{log this.correctAnswer}}` in `info-component.hbs`, which is the easiest way to drive the game manually.
 
 ### Octane / classic mix
 

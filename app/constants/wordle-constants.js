@@ -1,4 +1,7 @@
-export const SINGULAR_WORDS = [
+// The curated pool the answer is drawn from: common, guessable, non-offensive.
+// The much larger dictionary that used to live here was removed deliberately in
+// 66c15f9 ("Removed plural words"); do not restore it without a slur filter.
+export const ANSWER_WORDS = [
   "loops",
   "cigar",
   "rebut",
@@ -2311,4 +2314,6 @@ export const SINGULAR_WORDS = [
   "fanny"
 ];
 
-export const Words = [...SINGULAR_WORDS];
+// Accepted guesses. Currently identical to ANSWER_WORDS, but kept as a separate
+// export so a wider guess-only pool can be added here without touching the service.
+export const Words = [...ANSWER_WORDS];

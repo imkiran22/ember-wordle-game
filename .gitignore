@@ -4,7 +4,7 @@
 /dist/
 /tmp/
 
-# dependencies
+# dependencies (this project uses yarn - an npm lockfile would fight yarn.lock)
 /bower_components/
 /node_modules/
 
@@ -16,6 +16,7 @@
 /coverage/
 /libpeerconnection.log
 /npm-debug.log*
+/package-lock.json
 /testem.log
 /yarn-error.log
 

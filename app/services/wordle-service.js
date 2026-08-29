@@ -2,7 +2,7 @@ import Service from "@ember/service";
 import { inject as service } from "@ember/service";
 import { computed } from "@ember/object";
 // import { getOwner } from "@ember/application";
-import { Words } from "../constants/wordle-constants";
+import { ANSWER_WORDS, Words } from "../constants/wordle-constants";
 import { createKeyboard } from "../utils/wordle-utils";
 import { later } from "@ember/runloop";
 
@@ -10,11 +10,28 @@ const NO_OF_COLS = 5;
 const CHANCES = 6;
 const TOTAL_WORDS = NO_OF_COLS * CHANCES;
 
+// Built once per page load. Set lookup keeps guess validation O(1) instead of
+// scanning ~13k strings on every Enter press.
+const VALID_GUESSES = new Set(Words);
+
+// Answers come from the curated list only; the long tail stays guessable but is
+// never the word the player is asked to find.
+function pickAnswer() {
+  return ANSWER_WORDS[Math.floor(Math.random() * ANSWER_WORDS.length)];
+}
+
 export default Service.extend({
   store: service(),
-  wordsList: [...Words],
-  correctAnswer: Words[Math.floor(Math.random() * Words.length)],
-  letterPositions: computed({
+  correctAnswer: null,
+
+  init() {
+    this._super(...arguments);
+    // Drawn per instance, not at module evaluation - otherwise every instance
+    // in the realm shares one frozen answer for the lifetime of the page.
+    this.set("correctAnswer", pickAnswer());
+  },
+
+  letterPositions: computed("correctAnswer", {
     get() {
       let obj = {};
       let index = 0;
@@ -294,7 +311,7 @@ export default Service.extend({
       });
       this._makeAllLettersCorrect(startIndex);
       this._correctKeyboard(answer);
-    } else if (this.wordsList.includes(answer)) {
+    } else if (VALID_GUESSES.has(answer)) {
       // answer is wrong but a valid word - move to next position
       let freezeRowsClone = { ...freezeRows };
       freezeRowsClone[currentChance - 1] = true;
